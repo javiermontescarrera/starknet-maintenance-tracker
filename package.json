@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "chain": "yarn workspace @ss-2/snfoundry chain",
+    "chain": "yarn workspace @ss-2/snfoundry chain --host 0.0.0.0",
     "compile": "yarn workspace @ss-2/snfoundry compile",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
     "deploy:no-reset": "yarn workspace @ss-2/snfoundry deploy --no-reset",

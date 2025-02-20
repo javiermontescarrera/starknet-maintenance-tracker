@@ -9,7 +9,7 @@ import { green } from "./helpers/colorize-log";
 /**
  * Deploy a contract using the specified parameters.
  *
- * @example (deploy contract with constructorArgs)
+ * @example (deploy contract with contructorArgs)
  * const deployScript = async (): Promise<void> => {
  *   await deployContract(
  *     {
@@ -25,7 +25,7 @@ import { green } from "./helpers/colorize-log";
  *   );
  * };
  *
- * @example (deploy contract without constructorArgs)
+ * @example (deploy contract without contructorArgs)
  * const deployScript = async (): Promise<void> => {
  *   await deployContract(
  *     {
@@ -42,14 +42,8 @@ import { green } from "./helpers/colorize-log";
  * @returns {Promise<void>}
  */
 const deployScript = async (): Promise<void> => {
-  // await deployContract({
-  //   contract: "YourContract",
-  //   constructorArgs: {
-  //     owner: deployer.address,
-  //   },
-  // });
   await deployContract({
-    contract: "MaintenanceTracker",
+    contract: "YourCollectible",
     constructorArgs: {
       owner: deployer.address, // the deployer address is the owner of the contract
     },

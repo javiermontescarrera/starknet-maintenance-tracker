@@ -1,3 +1,34 @@
+## Process flowchart:
+
+```mermaid
+flowchart TD
+    A([Start]) --> B([Client: createTask])
+    B --> C([Repairman: completeTask])
+    C --> D([Quality Inspector: certifyTask])
+    D --> E([Client: payForMaintenance])
+    E --> F([dApp: Mint NFT certificate])
+    F --> G([End])
+```
+
+## Sequence diagram:
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant dApp
+    actor Repairman
+    actor Quality Inspector
+    Client->>dApp: createTask
+    dApp->>Client: TaskId
+    Repairman->>dApp: completeTask
+    Quality Inspector->>dApp: certifyTask
+    Client->>dApp: payForMaintenance
+    dApp->>dApp: Mint NFT certificate
+    dApp->>Client: NFT
+```
+
+##
+
 # 🏗 Scaffold-Stark
 
 <h4 align="center">
@@ -178,15 +209,16 @@ To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, 
 
 ```json
 {
- "jsonrpc":"2.0",
- "method":"starknet_specVersion",
- "id":1
+  "jsonrpc": "2.0",
+  "method": "starknet_specVersion",
+  "id": 1
 }
 ```
 
 You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
 
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
+
 </details>
 
 ## **What's next**
