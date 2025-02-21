@@ -1,3 +1,15 @@
+# 🔧 Starknet Maintenance Tracker
+
+<img src="./packages/nextjs/public/landing.png" width="500" height="250" />
+
+## Proceso de Mantenimiento y Certificación NFT
+
+## 📌 Descripción del Proyecto
+
+Este proyecto es una plataforma descentralizada que gestiona y certifica tareas de mantenimiento mediante tecnología blockchain. A través de una dApp, los usuarios pueden crear solicitudes de mantenimiento, realizar reparaciones, certificar su calidad y finalmente recibir un certificado NFT como prueba de la finalización del trabajo. La plataforma garantiza transparencia, seguridad y trazabilidad en cada paso del proceso.
+
+##
+
 ## Process flowchart:
 
 ```mermaid
@@ -29,29 +41,51 @@ sequenceDiagram
 
 ##
 
-# 🏗 Scaffold-Stark
+# 🔧 Proceso de Mantenimiento y Certificación NFT
 
-<h4 align="center">
-  <a href="https://docs.scaffoldstark.com/">Documentation</a> |
-  <a href="https://scaffoldstark.com/">Website</a> |
-  <a href="https://scaffold-stark-demo.vercel.app/debug">Demo</a>
-</h4>
+## 📝 Paso 1: Creación de Tarea
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+El cliente inicia el proceso creando una tarea a través de la aplicación dApp. La dApp recibe la solicitud y genera un ID de tarea único.
 
-⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry and Typescript.
+## 🔨 Paso 2: Reparación de la Tarea
 
-- ✅ **Contract Fast Reload**: Your frontend auto-adapts to your smart contracts as you deploy them.
-- 🪝 [**Custom hooks**](https://docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldstark.com/components): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
+El reparador recibe la tarea y la completa. La dApp recibe la notificación de que la tarea ha sido completada.
 
-![Debug Contracts tab](./packages/nextjs/public/debug-image.png)
+## ✅ Paso 3: Certificación de la Tarea
 
-## Requirements
+El inspector de calidad verifica la tarea completada y la certifica. La dApp recibe la notificación de que la tarea ha sido certificada.
 
-Before you begin, you need to install the following tools:
+## 💰 Paso 4: Pago por la Tarea
+
+El cliente paga por la tarea de mantenimiento a través de la dApp.
+
+## 🏆 Paso 5: Creación de Certificado NFT
+
+La dApp crea un certificado NFT que representa la tarea completada y certificada.
+
+## 🎁 Paso 6: Entrega del Certificado NFT
+
+La dApp entrega el certificado NFT al cliente.
+
+##
+
+### Dónde podemos probarla?:
+
+Aquí tenemos el [Live Demo](https://starknet-challenge-javier-montes.vercel.app/)
+
+<!-- ### Landing de la dApp: -->
+
+<!-- <img src="./packages/nextjs/public/landing.png" width="500" height="250" /> -->
+
+### Luego tenemos el Admin panel con todos los pasos mencionados en el flujo:
+
+<img src="./packages/nextjs/public/adminpanel.png" width="350" height="250" />
+
+##
+
+# Acerca del código:
+
+## Requirimientos
 
 - [Node (>= v18.17)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
@@ -60,33 +94,33 @@ Before you begin, you need to install the following tools:
 - [asdf](https://asdf-vm.com/guide/getting-started.html)
 - [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
 
-### Starknet-devnet version
+### Versión de Starknet-devnet
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.3`. To accomplish this, first check your local starknet-devnet version:
+Para asegurar el funcionamiento adecuado de scaffold-stark, su versión local de `starknet-devnet` debe ser la `0.2.3`. Para ello, primero verifique su versión local de starknet-devnet:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `0.2.3`, you need to install it.
+Si su versión local no es la `0.2.3`, ud necesitará instalarla.
 
-- Install Starknet-devnet `0.2.3` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Instalar Starknet-devnet `0.2.3` vía `asdf` ([instrucciones](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
-### Scarb version
+### Versión de Scarb
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.9.2`. To accomplish this, first check your local Scarb version:
+Para asegurar el funcionamiento adecuado de scaffold-stark, su versión local de `Scarb` debe ser la `2.9.2`. Para ello, primero verifique su versión local de Scarb:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.9.2`, you need to install it.
+Si su versión local no es la `2.9.2`, ud necesitará instalarla.
 
-- Install Scarb `2.9.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Instalar Scarb `2.9.2` vía `asdf` ([instrucciones](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
-### Starknet Foundry version
+### Versión de Starknet Foundry
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.35.1. To accomplish this, first check your Starknet Foundry version:
+Para asegurar el funcionamiento adecuado de los tests en scaffold-stark, su versión de Starknet Foundry debe ser 0.35.1. Para ello, primero verifique su versión local de Starknet Foundry:
 
 ```sh
 snforge --version
@@ -94,9 +128,9 @@ snforge --version
 
 If your Starknet Foundry version is not `0.35.1`, you need to install it.
 
-- Install Starknet Foundry `0.35.1` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Instalar Starknet Foundry `0.35.1` vía `asdf` ([instrucciones](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
-## Compatible versions
+## Versiones compatibles
 
 - Starknet-devnet - v0.2.3
 - Scarb - v2.9.2
@@ -104,108 +138,108 @@ If your Starknet Foundry version is not `0.35.1`, you need to install it.
 - Cairo - v2.9.2
 - Rpc - v0.7.1
 
-## Requirements (Alternative Option with Docker)
+## Requerimientos (Opción alternativa con Docker)
 
-As an alternative to installing the tools locally, you can use Docker. Here's what you need to do:
+Como una alternativa a instalar las herramientas localmente, Ud. puede utilizar Docker. Aquí tiene lo que se necesita:
 
-1. Install [Docker](https://www.docker.com/get-started/)
-2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-3. Use the provided `devcontainer.json` file to set up the environment:
-   - The configuration uses the `starknetfoundation/starknet-dev:2.9.2` image.
-   - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
+1. Instalar [Docker](https://www.docker.com/get-started/)
+2. Instlar [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+3. Utilizar el archivo `devcontainer.json` provisto para configurar el entorno de trabajo:
+   - Esta configuración utiliza la imagen `starknetfoundation/starknet-dev:2.9.2`.
+   - Ella inclure todas las herramientas necesarias ya pre-instladas, herramientas como: Scarb, Starknet Foundry, Starknet Devnet y otras dependencias.
 
-### Getting Started with Docker Setup
+### Empezando con la configuración Docker
 
-To start using the Docker-based setup:
+Para empezar a utilizar la configuración basada en Docker:
 
-1. Open the project in **Visual Studio Code**.
-2. Select **"Reopen in Container"**.
-3. If you need to rebuild the container, open the Command Palette (**View -> Command Palette**) and choose:
-   - **Dev Containers: Rebuild and Reopen in Container**
+1. Abra el proyecto en **Visual Studio Code**.
+2. Abra la paleta de comandos (Ctrl+Shift+P o Command+Shift+P) y selecccione: Reabrir en contenedor...
+3. Si necesita recompilar el contenedor, abra la paleta de comandos (**View -> Command Palette**) y seleccione:
+   - **Dev Containers: Recompilar y reabrir en contenedor**
 
-> Once inside the container, you can start working with all the tools and dependencies pre-configured.
+> Una vez en el contenedor, podrá empezar a trabajar con todas las herramientas y dependencias pre-configuradas.
 
-## Quickstart with Starknet-Devnet
+## Ejecución en Devnet
 
-To get started with Scaffold-Stark, follow the steps below:
+Para empezar a utilizar el proyecto, siga los siguientes pasos:
 
-1. Clone this repo and install dependencies
+1. Clone este repositorio e instale las dependencias
 
 ```bash
-git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
-cd scaffold-stark-2
+git clone https://github.com/javiermontescarrera/starknet-maintenance-tracker
+cd starknet-maintenance-tracker
 yarn install
 ```
 
-2. Run a local network in the first terminal.
+2. Ejecute la cadena de bloques local en la primera terminal.
 
 ```bash
 yarn chain
 ```
 
-> To run a fork : `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
+> Para levantar un fork : `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
 
-This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
+Este comando inicia una red Starknet local usando Devnet. La red se estará ejecutando en su equipo local y podrá ser utilizada para pruebas y desarrollo. Ud puede personalizar la configuración de la red, para su aplicación nextjs, en `scaffold.config.ts`.
 
-3. On a second terminal, deploy the sample contract:
+3. En una segunda terminal, despliegue el contrato:
 
 ```bash
 yarn deploy
 ```
 
-This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
+Este comando despliega el smart contract en la red local. El contrato está localizado en `packages/snfoundry/contracts/src`. El comando `yarn deploy` utiliza el script de despliegue ubicado en `packages/snfoundry/scripts-ts/deploy.ts` para desplegar el contrato en la red. También puede personalizar este script de despliegue.
 
-By default `Scaffold-Stark` takes the first prefunded account from `starknet-devnet` as a deployer address,
+Por defecto `Scaffold-Stark` toma la primera cuenta de `starknet-devnet` como la deployer address,
 
-4. On a third terminal, start your NextJS app:
+4. En una tercera terminal, inicie su aplicación NextJS:
 
 ```bash
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+Visite su aplicación en: `http://localhost:3000`. Puede interactuar con el smart contract utilizando la página `Home` o la `Debug Contracts`. Puedes modificar la configuración de la aplicación en `packages/nextjs/scaffold.config.ts`.
 
-5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+5. Verifique sus variables de entorno.
 
-## Quickstart with Sepolia Testnet
+## Inicio rápido con Sepolia Testnet
 
 <details>
 
-1. Make sure you already cloned this repo and installed dependencies.
+1. Asegúrese de haber clonado este repositorio e instalado las dependencias.
 
-2. Prepare your environment variables.
+2. Prepare sus variables de entorno.
 
-Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
+Encuentre el archivo `packages/snfoundry/.env` y agregue las variables de entorno relacionadas con Sepolia testnet utilizando la dirección y clave privada de su propia wallet account.
 
-3. Change your default network to Sepolia testnet.
+3. Cambie la red por defecto a Sepolia testnet.
 
-Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetworks` to `[chains.sepolia]`.
+Encuentre el archivo `packages/nextjs/scaffold.config.ts` y cambie `targetNetworks` a `[chains.sepolia]`.
 
 ![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
 
-4. Get some testnet tokens.
+4. Obtenga testnet tokens.
 
-You will need to get some `ETH` or `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
+Ud. podrá necesitar tokens `ETH` o `STRK` de Sepoliapara desplegar su contrato en Sepolia testnet.
 
-> Some popular faucets are [Starknet Faucet](https://starknet-faucet.vercel.app/) and [Blastapi Starknet Sepolia Eth](https://blastapi.io/faucets/starknet-sepolia-eth)
+> Algunos faucets populares son [Starknet Faucet](https://starknet-faucet.vercel.app/) y [Blastapi Starknet Sepolia Eth](https://blastapi.io/faucets/starknet-sepolia-eth)
 
-4. Open a terminal, deploy the sample contract to Sepolia testnet:
+4. Abra una terminal, despliegue el contrato a Sepolia testnet:
 
 ```bash
 yarn deploy --network sepolia
 ```
 
-5. On a second terminal, start your NextJS app:
+5. En una segunda terminal, inicie la aplicación NextJS:
 
 ```bash
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+Visite su aplicación en: `http://localhost:3000`. Puede interactuar con el smart contract utilizando la página `Home` o la `Debug Contracts`. Puedes modificar la configuración de la aplicación en `packages/nextjs/scaffold.config.ts`.
 
-### RPC specific version
+### Versión específica de RPC
 
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.1` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_7` and the body should be:
+Para asegurar el correcto funcionamiento de scaffold-stark con Testnet or Mainnet, su versión de RPC debe ser `0.7.1`. Este repositorio contiene un archivo `.env.example`, donde le proveemos el RPC por defecto para la URL del RPC para la Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Verifiquemos que la versión de RPC es `0.7.1` llamando un `POST` request una plataforma API como `Postman` o `Insommia` . Su API endpoint debería ser `https://starknet-sepolia.public.blastapi.io/rpc/v0_7` y el body debería ser:
 
 ```json
 {
@@ -215,52 +249,8 @@ To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, 
 }
 ```
 
-You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
+Ud. debe pegar el endpoint en la plataforma API (como `Postman` o `Insommia`) y hacer click en el botón `Enviar`. Si la respuesta es `0.7.1`, entonces va por buen camino. De lo contrario, deberá corregir el RPC URL endpoint.
 
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
 
 </details>
-
-## **What's next**
-
-- Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
-- Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
-- You can write unit tests for your Next.js app! Run them with one the following scripts below.
-  - `yarn test:nextjs` to run regular tests with watch mode
-  - `yarn test:nextjs run` to run regular tests without watch mode
-  - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
-
-## Documentation
-
-Visit our [docs](https://docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark.
-
-To know more about its features, check out our [website](https://scaffoldstark.com)
-
-#### External Image Source Configuration
-
-In the `next.config.mjs`, we've set up external image sources using `remotePatterns` to allow fetching assets from specific domains. This is particularly useful for loading images or assets from external servers or services.
-
-```javascript
-remotePatterns: [
-  // External image source for StarkNet ID identicons
-  {
-    protocol: "https",
-    hostname: "identicon.starknet.id",
-    pathname: "/**", // Allows all paths under this domain
-  },
-  // External image source for images hosted on Starkurabu
-  {
-    protocol: "https",
-    hostname: "img.starkurabu.com",
-    pathname: "/**",
-  },
-],
-```
-
-## Contributing to Scaffold-Stark
-
-We welcome contributions to Scaffold-Stark!
-
-Please see [CONTRIBUTING.MD](https://github.com/Scaffold-Stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.
