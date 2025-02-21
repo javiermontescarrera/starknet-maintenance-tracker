@@ -46,7 +46,7 @@ export function ExecuteTask() {
         </div>
         <select
           id="taskDropdown"
-          className="form-control m-2"
+          className="form-control m-2 p-1 rounded-md"
           value={selectedTask}
           onChange={handleTaskChange}
         >
@@ -58,7 +58,10 @@ export function ExecuteTask() {
         </select>
       </div>
 
-      <button className="btn btn-primary mt-2" onClick={handleCompleteTask}>
+      <button
+        className="btn btn-primary mt-2 border-2 border-secondary"
+        onClick={handleCompleteTask}
+      >
         Execute Task
       </button>
     </div>

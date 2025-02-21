@@ -64,7 +64,7 @@ export function OpenMaintenanceTask() {
                 <strong>Client Name:</strong>
                 <input
                   type="text"
-                  className="form-control w-96"
+                  className="form-control w-96 p-1 rounded-md mb-1"
                   placeholder="Enter client name..."
                   aria-label="Search"
                   value={clientName}
@@ -75,7 +75,7 @@ export function OpenMaintenanceTask() {
                 <strong>System Name:</strong>
                 <input
                   type="text"
-                  className="form-control w-96"
+                  className="form-control w-96 p-1 rounded-md mb-1"
                   placeholder="Enter System name..."
                   aria-label="Search"
                   value={systemName}
@@ -86,7 +86,7 @@ export function OpenMaintenanceTask() {
                 <strong>System Cycles:</strong>
                 <input
                   type="text"
-                  className="form-control w-96"
+                  className="form-control w-96 p-1 rounded-md mb-1"
                   placeholder="System cycles..."
                   aria-label="Search"
                   value={systemCycles}
@@ -97,7 +97,7 @@ export function OpenMaintenanceTask() {
                 <strong>Estimated Time (days):</strong>
                 <input
                   type="text"
-                  className="form-control w-96"
+                  className="form-control w-96 p-1 rounded-md mb-1"
                   placeholder="Enter estimated time..."
                   aria-label="Search"
                   value={estimatedTime}
@@ -108,7 +108,7 @@ export function OpenMaintenanceTask() {
                 <strong>Starting Date:</strong>
                 <input
                   type="text"
-                  className="form-control w-96"
+                  className="form-control w-96 p-1 rounded-md mb-1"
                   placeholder="Enter starting time..."
                   aria-label="Search"
                   value={startingTime}
@@ -120,7 +120,7 @@ export function OpenMaintenanceTask() {
                 <br />
                 <input
                   type="text"
-                  className="form-contro w-96"
+                  className="form-contro w-96 p-1 rounded-md mb-1"
                   placeholder="Enter cost..."
                   aria-label="Search"
                   value={cost}
@@ -131,7 +131,7 @@ export function OpenMaintenanceTask() {
                 <strong>Repairman (engineer):</strong>
                 <input
                   type="text"
-                  className="form-control w-96"
+                  className="form-control w-96 p-1 rounded-md mb-1"
                   placeholder="Enter repairman's address..."
                   aria-label="Search"
                   value={repairman}
@@ -142,7 +142,7 @@ export function OpenMaintenanceTask() {
                 <strong>Quality Inspector (engineer):</strong>
                 <input
                   type="text"
-                  className="form-control w-96"
+                  className="form-control w-96 p-1 rounded-md mb-1"
                   placeholder="Enter quality inspector's address..."
                   aria-label="Search"
                   value={qualityInspector}
@@ -151,7 +151,10 @@ export function OpenMaintenanceTask() {
               </li>
             </ul>
 
-            <button className="btn btn-primary" type="submit">
+            <button
+              className="btn btn-primary border-2 border-secondary"
+              type="submit"
+            >
               Submit
             </button>
           </form>

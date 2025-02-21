@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { MyHoldings } from "../SimpleNFT/MyHoldings";
-import { MaintenanceTask } from "./MaintenanceTask";
+// import { MyHoldings } from "../SimpleNFT/MyHoldings";
 import { AdminPanel } from "../admin/AdminPanel";
 
 export const MaintenanceExplorer = ({
@@ -10,8 +9,10 @@ export const MaintenanceExplorer = ({
 }) => {
   return (
     <>
-      <div className="wrapper">
-        <h4 className="text-2xl">Maintenance Task Explorer</h4>
+      <div className="wrapper mb-14">
+        <h4 className="text-3xl font-bold text-center">
+          Maintenance Task Explorer
+        </h4>
         {/* <div className="input-group mb-3">
           <input
             type="text"
@@ -26,9 +27,8 @@ export const MaintenanceExplorer = ({
             </button>
           </div>
         </div> */}
-        {/* <MaintenanceTask></MaintenanceTask> */}
         <AdminPanel />
-        <MyHoldings setStatus={setStatus} />
+        {/* <MyHoldings setStatus={setStatus} /> */}
       </div>
     </>
   );

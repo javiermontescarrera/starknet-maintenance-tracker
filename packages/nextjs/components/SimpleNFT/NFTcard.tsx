@@ -51,9 +51,10 @@ export const NFTCard = ({ nft }: { nft: Collectible }) => {
             {nft.attributes?.map((attr: any, index: any) => (
               <span
                 key={index}
-                className=" badge-secondary badge py-3 text-white border-base-100"
+                className=" badge-secondary badge py-3.5 mb-0.5 text-white border-base-100 w-96 truncate justify-start"
               >
-                {attr.trait_type}: {attr.value}
+                <span className="font-bold">{attr.trait_type}</span>:{" "}
+                {attr.value}
               </span>
             ))}
           </div>

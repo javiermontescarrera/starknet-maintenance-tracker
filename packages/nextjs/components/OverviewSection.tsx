@@ -1,6 +1,9 @@
+import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import Image from "next/image";
 
 export function OverviewSection() {
+  const { data: MaintenanceTracker } =
+    useDeployedContractInfo("MaintenanceTracker");
   return (
     <>
       <div className="text-center">
@@ -35,10 +38,11 @@ export function OverviewSection() {
               entire maintenance lifecycle.
             </p>
             <div className="row mt-4 mb-4">
-              <div className="col-md-4 text-left">Contract info:</div>
+              <div className="col-md-4 text-left font-bold">Contract info:</div>
               <div className="col-md-8">
                 <div>
-                  <strong>Maintenance Factory CT address:</strong> 0X123...7A6
+                  <strong>Maintenance Tracker contract address:</strong>{" "}
+                  {MaintenanceTracker?.address}
                 </div>
               </div>
             </div>

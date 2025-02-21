@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAccount } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
-import { TaskData, nftMetadata } from "~~/utils/scaffold-stark/common";
+import { TaskData, nftMetadata } from "~~/utils/simpleNFT/nftsMetadata";
 import { addToIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
@@ -106,7 +106,7 @@ export function PayTask() {
         </div>
         <select
           id="taskDropdown"
-          className="form-control m-2"
+          className="form-control m-2 p-1 rounded-md"
           value={selectedTask}
           onChange={handleTaskChange}
         >
@@ -118,7 +118,10 @@ export function PayTask() {
         </select>
       </div>
 
-      <button className="btn btn-primary mt-2" onClick={handlePayAndMint}>
+      <button
+        className="btn btn-primary mt-2 border-2 border-secondary"
+        onClick={handlePayAndMint}
+      >
         Pay and Mint
       </button>
     </div>

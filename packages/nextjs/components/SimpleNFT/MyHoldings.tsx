@@ -99,8 +99,8 @@ export const MyHoldings = ({
     <>
       <div className="flex items-center flex-col pt-10">
         <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-4xl font-bold">My Certificates</span>
+          <h1 className="text-center mb-2">
+            <span className="block text-3xl font-bold">My Certificates</span>
           </h1>
         </div>
       </div>

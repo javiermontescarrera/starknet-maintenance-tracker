@@ -46,7 +46,7 @@ export function CertifyTask() {
         </div>
         <select
           id="taskDropdown"
-          className="form-control m-2"
+          className="form-control m-2 p-1 rounded-md"
           value={selectedTask}
           onChange={handleTaskChange}
         >
@@ -58,7 +58,10 @@ export function CertifyTask() {
         </select>
       </div>
 
-      <button className="btn btn-primary mt-2" onClick={handleCertifyTask}>
+      <button
+        className="btn btn-primary mt-2 border-2 border-secondary"
+        onClick={handleCertifyTask}
+      >
         Certify Task
       </button>
     </div>
