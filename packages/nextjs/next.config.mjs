@@ -18,6 +18,11 @@ const nextConfig = {
         hostname: "img.starkurabu.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "ipfs.io",
+        pathname: "/ipfs/**",
+      },
     ],
   },
   typescript: {
@@ -32,7 +37,7 @@ const nextConfig = {
     config.plugins.push(
       new webpack.NormalModuleReplacementPlugin(/^node:(.*)$/, (resource) => {
         resource.request = resource.request.replace(/^node:/, "");
-      }),
+      })
     );
     return config;
   },

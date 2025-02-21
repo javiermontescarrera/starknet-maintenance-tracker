@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, BugAntIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { useTheme } from "next-themes";
@@ -21,6 +21,11 @@ type HeaderMenuLink = {
 };
 
 export const menuLinks: HeaderMenuLink[] = [
+  // {
+  //   label: "My NFTs",
+  //   href: "/myNFTs",
+  //   icon: <PhotoIcon className="h-4 w-4" />,
+  // },
   {
     label: "Home",
     href: "/",
@@ -75,7 +80,7 @@ export const Header = () => {
   useOutsideClick(
     //@ts-expect-error refs are supposed to be null by default
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
+    useCallback(() => setIsDrawerOpen(false), [])
   );
 
   const { targetNetwork } = useTargetNetwork();
@@ -145,7 +150,7 @@ export const Header = () => {
             </ul>
           )}
         </div>
-        <Link
+        {/* <Link
           href="/"
           passHref
           className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
@@ -162,7 +167,7 @@ export const Header = () => {
             <span className="font-bold leading-tight">Scaffold-Stark</span>
             <span className="text-xs">Starknet dev stack</span>
           </div>
-        </Link>
+        </Link> */}
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
           <HeaderMenuLinks />
         </ul>

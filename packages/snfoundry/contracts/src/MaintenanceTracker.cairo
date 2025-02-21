@@ -1,4 +1,9 @@
-use starknet::ContractAddress;
+use starknet::{
+    ContractAddress, 
+    contract_address_const, 
+    get_caller_address,
+    get_contract_address
+};
 
 #[derive(Drop, Serde, starknet::Store)]
 #[allow(starknet::store_no_default_variant)]
@@ -25,7 +30,7 @@ struct MaintenanceTask {
     system_cycles: u64,
     estimated_time: felt252,
     start_time: felt252,
-    cost: usize,
+    cost: u256,
     general_status: TaskStatus,
     execution_status: ExecutionStatus,
     repairman: ContractAddress,
@@ -42,29 +47,15 @@ pub trait IMaintenanceTracker<T> {
         system_cycles: u64,
         estimated_time: felt252,
         start_time: felt252,
-        cost: usize,
+        cost: u256,
         repairman: ContractAddress,
         quality_inspector: ContractAddress
     ) -> u256;
-
-    fn get_maintenance_task(ref self: T, task_id: u256) -> MaintenanceTask;
-
-    fn update_general_status(ref self: T, task_id: u256, new_status: TaskStatus);
-
-    fn update_execution_status(ref self: T, task_id: u256, new_status: ExecutionStatus);
-
+    fn get_maintenance_task(self: @T, task_id: u256) -> MaintenanceTask;
     fn complete_maintenance(ref self: T, task_id: u256);
-
     fn certify_maintenance(ref self: T, task_id: u256);
-
-    // fn pay_for_task(
-    //     ref self: T, 
-    //     task_id: u256,
-    //     cost: usize,
-    //     image_ipfs_hash: felt252
-    // );
-
-    fn mint_item(ref self: T, task_id: u256, recipient: ContractAddress, uri: ByteArray);
+    fn pay_and_mint(ref self: T, task_id: u256, recipient: ContractAddress, uri: ByteArray);
+    fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
 }
 
 #[starknet::contract]
@@ -80,13 +71,24 @@ mod MaintenanceTracker {
     };
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
 
-    use super::{ContractAddress, IMaintenanceTracker, TaskStatus, ExecutionStatus, MaintenanceTask};
+    use super::{
+        ContractAddress, 
+        contract_address_const, 
+        get_caller_address, 
+        get_contract_address, 
+        IMaintenanceTracker, 
+        TaskStatus, 
+        ExecutionStatus, 
+        MaintenanceTask
+    };
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     component!(path: CounterComponent, storage: token_id_counter, event: CounterEvent);
     component!(path: ERC721EnumerableComponent, storage: enumerable, event: EnumerableEvent);
+
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
     // Expose entrypoints
     #[abi(embed_v0)]
@@ -102,6 +104,10 @@ mod MaintenanceTracker {
     #[abi(embed_v0)]
     impl ERC721EnumerableImpl =
         ERC721EnumerableComponent::ERC721EnumerableImpl<ContractState>;
+
+
+    const ETH_CONTRACT_ADDRESS: felt252 =
+    0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7;
 
     // Use internal implementations but do not expose them
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
@@ -160,7 +166,7 @@ mod MaintenanceTracker {
             system_cycles: u64,
             estimated_time: felt252,
             start_time: felt252,
-            cost: usize,
+            cost: u256,
             repairman: ContractAddress,
             quality_inspector: ContractAddress
         ) -> u256
@@ -186,22 +192,8 @@ mod MaintenanceTracker {
             task_id
         }
 
-        fn get_maintenance_task(ref self: ContractState, task_id: u256) -> MaintenanceTask {
+        fn get_maintenance_task(self: @ContractState, task_id: u256) -> MaintenanceTask {
             self.maintenance_tasks.read(task_id)
-        }
-
-        #[internal]
-        fn update_general_status(ref self: ContractState, task_id: u256, new_status: TaskStatus) {
-            let mut task = self.maintenance_tasks.read(task_id);
-            task.general_status = new_status;
-            self.maintenance_tasks.write(task_id, task);
-        }
-
-        #[internal]
-        fn update_execution_status(ref self: ContractState, task_id: u256, new_status: ExecutionStatus) {
-            let mut task = self.maintenance_tasks.read(task_id);
-            task.execution_status = new_status;
-            self.maintenance_tasks.write(task_id, task);
         }
 
         fn complete_maintenance(ref self: ContractState, task_id: u256) {
@@ -229,16 +221,15 @@ mod MaintenanceTracker {
             }
         }
 
-        fn mint_item(ref self: ContractState, task_id: u256, recipient: ContractAddress, uri: ByteArray) {
+        fn pay_and_mint(ref self: ContractState, task_id: u256, recipient: ContractAddress, uri: ByteArray) {
             let task = self.maintenance_tasks.read(task_id);
             
             // Verify that execution_status current value is "CompletedPaid"
             match task.general_status {
-                TaskStatus::CompletedPaid => {
-                    let token_id = task_id;
-                    self.erc721.mint(recipient, token_id);
-                    self.set_token_uri(token_id, uri);
-
+                TaskStatus::CompletedUnpaid => {
+                    self.pay_for_task(task.cost);
+                    self.update_general_status(task_id, TaskStatus::CompletedPaid);
+                    self.mint_certificate(task_id, recipient, uri);
                     self.update_general_status(task_id, TaskStatus::CertificateMinted);
                 },
                 _ => {
@@ -247,6 +238,18 @@ mod MaintenanceTracker {
             }
 
         }
+
+        // Borrar ============================================================================
+        fn mint_item(ref self: ContractState, recipient: ContractAddress, uri: ByteArray) -> u256 {
+            
+            self.token_id_counter.increment();
+            let token_id = self.token_id_counter.current();
+            self.erc721.mint(recipient, token_id);
+            self.set_token_uri(token_id, uri);
+
+            token_id  
+        }
+        // ===================================================================================
     }
 
     #[abi(embed_v0)]
@@ -288,6 +291,36 @@ mod MaintenanceTracker {
         fn set_token_uri(ref self: ContractState, token_id: u256, uri: ByteArray) {
             assert(self.erc721.exists(token_id), ERC721Component::Errors::INVALID_TOKEN_ID);
             self.token_uris.write(token_id, uri);
+        }
+
+
+        
+        fn update_general_status(ref self: ContractState, task_id: u256, new_status: TaskStatus) {
+            let mut task = self.maintenance_tasks.read(task_id);
+            task.general_status = new_status;
+            self.maintenance_tasks.write(task_id, task);
+        }
+
+        fn update_execution_status(ref self: ContractState, task_id: u256, new_status: ExecutionStatus) {
+            let mut task = self.maintenance_tasks.read(task_id);
+            task.execution_status = new_status;
+            self.maintenance_tasks.write(task_id, task);
+        }
+
+        fn _get_token_dispatcher(ref self: ContractState, token: ContractAddress) -> IERC20Dispatcher {
+            return IERC20Dispatcher { contract_address: token };
+        }
+
+        fn pay_for_task(ref self: ContractState, cost: u256) { 
+            let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
+            // let eth_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
+            self._get_token_dispatcher(eth_contract_address)
+                .transfer_from(get_caller_address(), get_contract_address(), cost);
+        }
+
+        fn mint_certificate(ref self: ContractState, task_id: u256, recipient: ContractAddress, uri: ByteArray) {
+            self.erc721.mint(recipient, task_id);
+            self.set_token_uri(task_id, uri);
         }
     }
 

@@ -1,62 +1,104 @@
-import Link from "next/link";
-import Image from "next/image";
-import { ConnectedAddress } from "~~/components/ConnectedAddress";
+"use client";
 
-const Home = () => {
+import type { NextPage } from "next";
+import { useAccount } from "@starknet-react/core";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
+import { useState } from "react";
+import { OverviewSection } from "~~/components/OverviewSection";
+import { MaintenanceExplorer } from "~~/components/maintenance/MaintenanceExplorer";
+
+const Home: NextPage = () => {
+  const { address: connectedAddress, isConnected, isConnecting } = useAccount();
+  const [status, setStatus] = useState("Mint NFT");
+  const [isMinting, setIsMinting] = useState(false);
+  const [lastMintedTokenId, setLastMintedTokenId] = useState<number>();
+
+  const { sendAsync: mintItem } = useScaffoldWriteContract({
+    contractName: "MaintenanceTracker",
+    functionName: "mint_item",
+    args: [connectedAddress, ""],
+  });
+
+  const { data: tokenIdCounter, refetch } = useScaffoldReadContract({
+    contractName: "MaintenanceTracker",
+    functionName: "current",
+    watch: true,
+  });
+
+  // const handleMintItem = async () => {
+  //   setStatus("Minting NFT");
+  //   setIsMinting(true);
+  //   const tokenIdCounterNumber = Number(tokenIdCounter);
+
+  //   // circle back to the zero item if we've reached the end of the array
+  //   if (
+  //     tokenIdCounter === undefined ||
+  //     tokenIdCounterNumber === lastMintedTokenId
+  //   ) {
+  //     setStatus("Mint NFT");
+  //     setIsMinting(false);
+  //     notification.warning(
+  //       "Cannot mint the same token again, please wait for the new token ID"
+  //     );
+  //     return;
+  //   }
+
+  //   // const currentTokenMetaData = nftsMetadata[tokenIdCounterNumber % nftsMetadata.length];
+  //   const currentTokenMetaData = nftMetadata();
+  //   // console.log("currentTokenMetaData: ", currentTokenMetaData);
+  //   const notificationId = notification.loading("Uploading to IPFS");
+  //   try {
+  //     const uploadedItem = await addToIPFS(currentTokenMetaData);
+
+  //     // First remove previous loading notification and then show success notification
+  //     notification.remove(notificationId);
+  //     notification.success("Metadata uploaded to IPFS");
+
+  //     await mintItem({
+  //       args: [connectedAddress, uploadedItem.path],
+  //     });
+  //     setStatus("Updating NFT List");
+  //     refetch();
+  //     setLastMintedTokenId(tokenIdCounterNumber);
+  //     setIsMinting(false);
+  //   } catch (error) {
+  //     notification.remove(notificationId);
+  //     console.error(error);
+  //     setStatus("Mint NFT");
+  //     setIsMinting(false);
+  //   }
+  // };
+
   return (
-    <div className="flex items-center flex-col flex-grow pt-10">
-      <div className="px-5">
-        <h1 className="text-center">
-          <span className="block text-2xl mb-2">Welcome to</span>
-          <span className="block text-4xl font-bold">Scaffold-Stark 2</span>
-        </h1>
-        <ConnectedAddress />
-        <p className="text-center text-lg">
-          Edit your smart contract{" "}
-          <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
-            YourContract.cairo
-          </code>{" "}
-          in{" "}
-          <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
-            packages/snfoundry/contracts/src
-          </code>
-        </p>
-      </div>
-
-      <div className="bg-container flex-grow w-full mt-16 px-8 py-12">
-        <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-          <div className="flex flex-col bg-base-100 relative text-[12px] px-10 py-10 text-center items-center max-w-xs rounded-3xl border border-gradient">
-            <div className="trapeze"></div>
-            <Image
-              src="/debug-icon.svg"
-              alt="icon"
-              width={26}
-              height={30}
-            ></Image>
-            <p>
-              Tinker with your smart contract using the{" "}
-              <Link href="/debug" passHref className="link">
-                Debug Contracts
-              </Link>{" "}
-              tab.
-            </p>
-          </div>
-          <div className="flex flex-col bg-base-100 relative text-[12px] px-10 py-10 text-center items-center max-w-xs rounded-3xl border border-gradient">
-            <div className="trapeze"></div>
-            <Image
-              src="/explorer-icon.svg"
-              alt="icon"
-              width={20}
-              height={32}
-            ></Image>
-            <p>
-              Play around with Multiwrite transactions using
-              useScaffoldMultiWrite() hook
-            </p>
-          </div>
+    <>
+      <OverviewSection />
+      <MaintenanceExplorer setStatus={setStatus} />
+      {/* <div className="flex items-center flex-col pt-10">
+        <div className="px-5">
+          <h1 className="text-center mb-8">
+            <span className="block text-4xl font-bold">My NFTs</span>
+          </h1>
         </div>
-      </div>
-    </div>
+      </div> */}
+      {/* <div className="flex justify-center">
+        {!isConnected || isConnecting ? (
+          <CustomConnectButton />
+        ) : (
+          <button
+            className="btn btn-secondary text-white"
+            disabled={status !== "Mint NFT" || isMinting}
+            onClick={handleMintItem}
+          >
+            {status !== "Mint NFT" && (
+              <span className="loading loading-spinner loading-xs"></span>
+            )}
+            {status}
+          </button>
+        )}
+      </div> */}
+      {/* <MyHoldings setStatus={setStatus} /> */}
+    </>
   );
 };
 
