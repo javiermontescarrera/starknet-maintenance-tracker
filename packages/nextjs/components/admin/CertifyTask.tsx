@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { notification } from "~~/utils/scaffold-stark";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
+import { TaskSelect } from "~~/components/admin/TaskSelect";
 
 export function CertifyTask() {
-  const [selectedTask, setSelectedTask] = useState(1);
+  const [selectedTask, setSelectedTask] = useState(0);
 
   const { sendAsync: certifyMaintenance } = useScaffoldWriteContract({
     contractName: "MaintenanceTracker",
@@ -15,11 +16,9 @@ export function CertifyTask() {
     setSelectedTask(parseInt(event.target.value, 10));
   };
 
-  const handleCertifyTask = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-
+  const handleCertifyTask = async (taskId: number) => {
     notification.info(`Executing task ${selectedTask}...`);
-    certifyMaintenance()
+    await certifyMaintenance()
       .then(() => {
         notification.success("Maintenance task certified successfully!");
       })
@@ -38,32 +37,12 @@ export function CertifyTask() {
           </div>
         </h5>
       </div>
-      <div className="row">
-        <div className="p-2">
-          <label htmlFor="taskDropdown">
-            <strong>Select Task:</strong>
-          </label>
-        </div>
-        <select
-          id="taskDropdown"
-          className="form-control m-2 p-1 rounded-md"
-          value={selectedTask}
-          onChange={handleTaskChange}
-        >
-          {Array.from({ length: 11 }, (_, index) => (
-            <option key={index} value={index + 1}>
-              Task {index + 1}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <button
-        className="btn btn-primary mt-2 border-2 border-secondary"
-        onClick={handleCertifyTask}
-      >
-        Certify Task
-      </button>
+      <TaskSelect
+        actionName="Certify Task"
+        selectedTask={selectedTask}
+        setSelectedTask={setSelectedTask}
+        handleAction={handleCertifyTask}
+      />
     </div>
   );
 }

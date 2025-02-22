@@ -6,16 +6,17 @@ import { addToIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
+import { TaskSelect } from "~~/components/admin/TaskSelect";
 
 export function PayTask() {
   const { address: connectedAddress } = useAccount();
   const { data: MaintenanceTracker } =
     useDeployedContractInfo("MaintenanceTracker");
 
-  const [selectedTask, setSelectedTask] = useState(1);
+  const [selectedTask, setSelectedTask] = useState(0);
   const [uploadedItemPath, setUploadedItemPath] = useState("");
 
-  const { data: taskData, refetch } = useScaffoldReadContract({
+  const { data: taskData, refetch: refreshTaskData } = useScaffoldReadContract({
     contractName: "MaintenanceTracker",
     functionName: "get_maintenance_task",
     args: [selectedTask],
@@ -37,18 +38,12 @@ export function PayTask() {
     ],
   });
 
-  const handleTaskChange = (event: { target: { value: string } }) => {
-    setSelectedTask(parseInt(event.target.value, 10));
-  };
-
-  const handlePayAndMint = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-
+  const handlePayAndMint = async (taskId: number) => {
     // notification.info(`Paying for task ${selectedTask}...`);
     // console.log("taskData: ", taskData);
 
     const currentTokenMetaData = nftMetadata(taskData as any);
-    console.log("currentTokenMetaData: ", currentTokenMetaData);
+    // console.log("currentTokenMetaData: ", currentTokenMetaData);
 
     const notificationId = notification.loading("Uploading to IPFS");
     try {
@@ -68,25 +63,24 @@ export function PayTask() {
   };
 
   useEffect(() => {
-    refetch().then(() => {
-      if (uploadedItemPath) {
-        console.log("uploadedItemPath: ", uploadedItemPath);
-        if (uploadedItemPath !== "")
-          payAndMint()
-            .then(() => {
-              notification.success("Maintenance task certified successfully!");
-            })
-            .catch((error) => {
-              console.error("Error certifying task:", error);
-              notification.error("Error certifying task");
-            });
-      }
-    });
+    // refreshTaskData().then(() => {
+    if (uploadedItemPath) {
+      if (uploadedItemPath !== "") console.log("selectedTask: ", selectedTask);
+      payAndMint()
+        .then(() => {
+          notification.success("Maintenance task certified successfully!");
+        })
+        .catch((error) => {
+          console.error("Error paying and minting NFT:", error);
+          notification.error("Error paying and minting NFT");
+        });
+    }
+    // });
   }, [uploadedItemPath]);
 
   useEffect(() => {
-    refetch();
-    // refetch().then(() => console.log("taskData: ", taskData));
+    refreshTaskData();
+    // refreshTaskData().then(() => console.log("taskData: ", taskData));
   }, [selectedTask]);
 
   return (
@@ -98,32 +92,12 @@ export function PayTask() {
           </div>
         </h5>
       </div>
-      <div className="row">
-        <div className="p-2">
-          <label htmlFor="taskDropdown">
-            <strong>Select Task:</strong>
-          </label>
-        </div>
-        <select
-          id="taskDropdown"
-          className="form-control m-2 p-1 rounded-md"
-          value={selectedTask}
-          onChange={handleTaskChange}
-        >
-          {Array.from({ length: 11 }, (_, index) => (
-            <option key={index} value={index + 1}>
-              Task {index + 1}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <button
-        className="btn btn-primary mt-2 border-2 border-secondary"
-        onClick={handlePayAndMint}
-      >
-        Pay and Mint
-      </button>
+      <TaskSelect
+        actionName="Pay and Mint"
+        selectedTask={selectedTask}
+        setSelectedTask={setSelectedTask}
+        handleAction={handlePayAndMint}
+      />
     </div>
   );
 }

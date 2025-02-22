@@ -27,7 +27,7 @@ export const NFTCard = ({ nft }: { nft: Collectible }) => {
 
   return (
     <div className="card card-compact bg-base-100 sm:min-w-[300px] border border-secondary">
-      <figure className="relative rounded-t-[15px]">
+      <figure className="relative rounded-t-[15px] pt-2">
         {/* eslint-disable-next-line  */}
         <img
           src={nft.image}

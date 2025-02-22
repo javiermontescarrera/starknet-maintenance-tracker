@@ -139,6 +139,8 @@ export interface TaskData {
   system_cycles: number;
   start_time: number;
   estimated_time: number;
+  general_status: Object;
+  execution_status: Object;
   repairman: string;
   quality_inspector: string;
 }
@@ -188,6 +190,45 @@ export const nftMetadata = (taskData: TaskData | undefined) => {
   };
 
   return metadata;
+};
+
+export enum eTaskStatus {
+  PENDING = "Pending",
+  COMPLETED_BY_REPAIRMAN = "Completed by Repairman",
+  CERTIFIED_BY_QUALITY_INSPECTOR = "Certified by Quality Inspector",
+  COMPLETED_UNPAID = "Completed Unpaid",
+  COMPLETED_PAID = "Completed Paid",
+  CERTIFICATE_MINTED = "Certificate Minted",
+}
+
+export const getTaskStatus = (taskData: TaskData) => {
+  let taskStatus: eTaskStatus = eTaskStatus.PENDING;
+
+  if (taskData) {
+    if (taskData.general_status.variant.InProgress !== undefined) {
+      if (taskData.execution_status.variant.None !== undefined) {
+        taskStatus = eTaskStatus.PENDING;
+      } else if (
+        taskData.execution_status.variant.CompletedByRepairman !== undefined
+      )
+        taskStatus = eTaskStatus.COMPLETED_BY_REPAIRMAN;
+      else if (
+        taskData.execution_status.variant.CertifiedByQualityInspector !==
+        undefined
+      )
+        taskStatus = eTaskStatus.CERTIFIED_BY_QUALITY_INSPECTOR;
+    } else if (taskData.general_status.variant.CompletedUnpaid !== undefined) {
+      taskStatus = eTaskStatus.COMPLETED_UNPAID;
+    } else if (taskData.general_status.variant.CompletedPaid !== undefined) {
+      taskStatus = eTaskStatus.COMPLETED_PAID;
+    } else if (
+      taskData.general_status.variant.CertificateMinted !== undefined
+    ) {
+      taskStatus = eTaskStatus.CERTIFICATE_MINTED;
+    }
+  }
+
+  return taskStatus;
 };
 
 export type NFTMetaData = (typeof nftsMetadata)[number];

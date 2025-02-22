@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react";
-// import { MyHoldings } from "../SimpleNFT/MyHoldings";
 import { AdminPanel } from "../admin/AdminPanel";
 
 export const MaintenanceExplorer = ({
@@ -28,7 +27,6 @@ export const MaintenanceExplorer = ({
           </div>
         </div> */}
         <AdminPanel />
-        {/* <MyHoldings setStatus={setStatus} /> */}
       </div>
     </>
   );

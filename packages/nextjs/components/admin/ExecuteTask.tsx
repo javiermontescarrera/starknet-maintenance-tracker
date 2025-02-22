@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { notification } from "~~/utils/scaffold-stark";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
+import { TaskSelect } from "~~/components/admin/TaskSelect";
 
 export function ExecuteTask() {
-  const [selectedTask, setSelectedTask] = useState(1);
+  const [selectedTask, setSelectedTask] = useState(0);
 
   const { sendAsync: completeMaintenance } = useScaffoldWriteContract({
     contractName: "MaintenanceTracker",
@@ -15,11 +16,9 @@ export function ExecuteTask() {
     setSelectedTask(parseInt(event.target.value, 10));
   };
 
-  const handleCompleteTask = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-
+  const handleCompleteTask = async (taskId: number) => {
     // notification.info(`Executing task ${selectedTask}...`);
-    completeMaintenance()
+    await completeMaintenance()
       .then(() => {
         notification.success("Maintenance task completed successfully!");
       })
@@ -38,32 +37,12 @@ export function ExecuteTask() {
           </div>
         </h5>
       </div>
-      <div className="row">
-        <div className="p-2">
-          <label htmlFor="taskDropdown">
-            <strong>Select Task:</strong>
-          </label>
-        </div>
-        <select
-          id="taskDropdown"
-          className="form-control m-2 p-1 rounded-md"
-          value={selectedTask}
-          onChange={handleTaskChange}
-        >
-          {Array.from({ length: 11 }, (_, index) => (
-            <option key={index} value={index + 1}>
-              Task {index + 1}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <button
-        className="btn btn-primary mt-2 border-2 border-secondary"
-        onClick={handleCompleteTask}
-      >
-        Execute Task
-      </button>
+      <TaskSelect
+        actionName="Execute Task"
+        selectedTask={selectedTask}
+        setSelectedTask={setSelectedTask}
+        handleAction={handleCompleteTask}
+      />
     </div>
   );
 }
