@@ -139,8 +139,8 @@ export interface TaskData {
   system_cycles: number;
   start_time: number;
   estimated_time: number;
-  general_status: Object;
-  execution_status: Object;
+  general_status: any;
+  execution_status: any;
   repairman: string;
   quality_inspector: string;
 }
