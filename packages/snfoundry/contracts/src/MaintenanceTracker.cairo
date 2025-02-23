@@ -7,7 +7,7 @@ use starknet::{
 
 #[derive(Drop, Serde, starknet::Store)]
 #[allow(starknet::store_no_default_variant)]
-enum TaskStatus {
+pub enum TaskStatus {
     InProgress,
     CompletedUnpaid,
     CompletedPaid,
@@ -16,25 +16,25 @@ enum TaskStatus {
 
 #[derive(Drop, Serde, starknet::Store)]
 #[allow(starknet::store_no_default_variant)]
-enum ExecutionStatus {
+pub enum ExecutionStatus {
     None,
     CompletedByRepairman,
     CertifiedByQualityInspector,
 }
 
 #[derive(Drop, Serde, starknet::Store)]
-struct MaintenanceTask {
-    client_name: ByteArray,
-    system_name: ByteArray,
-    maintenance_name: ByteArray,
-    system_cycles: u64,
-    estimated_time: felt252,
-    start_time: felt252,
-    cost: u256,
-    general_status: TaskStatus,
-    execution_status: ExecutionStatus,
-    repairman: ContractAddress,
-    quality_inspector: ContractAddress,
+pub struct MaintenanceTask {
+    pub client_name: ByteArray,
+    pub system_name: ByteArray,
+    pub maintenance_name: ByteArray,
+    pub system_cycles: u64,
+    pub estimated_time: felt252,
+    pub start_time: felt252,
+    pub cost: u256,
+    pub general_status: TaskStatus,
+    pub execution_status: ExecutionStatus,
+    pub repairman: ContractAddress,
+    pub quality_inspector: ContractAddress,
 }
 
 #[starknet::interface]
@@ -56,6 +56,17 @@ pub trait IMaintenanceTracker<T> {
     fn certify_maintenance(ref self: T, task_id: u256);
     fn pay_and_mint(ref self: T, task_id: u256, recipient: ContractAddress, uri: ByteArray);
     fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
+}
+
+impl PartialEqImpl of PartialEq<ExecutionStatus> {
+    fn eq(lhs: @ExecutionStatus, rhs: @ExecutionStatus) -> bool {
+        match (lhs, rhs) {
+            (ExecutionStatus::None, ExecutionStatus::None) => true,
+            (ExecutionStatus::CompletedByRepairman, ExecutionStatus::CompletedByRepairman) => true,
+            (ExecutionStatus::CertifiedByQualityInspector, ExecutionStatus::CertifiedByQualityInspector) => true,
+            _ => false,
+        }
+    }
 }
 
 #[starknet::contract]
@@ -224,11 +235,15 @@ mod MaintenanceTracker {
         fn pay_and_mint(ref self: ContractState, task_id: u256, recipient: ContractAddress, uri: ByteArray) {
             let task = self.maintenance_tasks.read(task_id);
             
-            // Verify that execution_status current value is "CompletedPaid"
+            // Verify that execution_status current value is either "CompletedUnPaid" or "CompletedPaid"
             match task.general_status {
                 TaskStatus::CompletedUnpaid => {
                     self.pay_for_task(task.cost);
                     self.update_general_status(task_id, TaskStatus::CompletedPaid);
+                    self.mint_certificate(task_id, recipient, uri);
+                    self.update_general_status(task_id, TaskStatus::CertificateMinted);
+                },
+                TaskStatus::CompletedPaid => {
                     self.mint_certificate(task_id, recipient, uri);
                     self.update_general_status(task_id, TaskStatus::CertificateMinted);
                 },

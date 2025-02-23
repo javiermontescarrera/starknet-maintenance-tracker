@@ -1,7 +1,14 @@
-use contracts::MaintenanceTracker::{IMaintenanceTrackerDispatcher, IMaintenanceTrackerDispatcherTrait};
+use contracts::MaintenanceTracker::{
+    IMaintenanceTrackerDispatcher, 
+    IMaintenanceTrackerDispatcherTrait, 
+    TaskStatus,
+    ExecutionStatus,
+    MaintenanceTask,
+};
 use contracts::components::ERC721Enumerable::{
     IERC721EnumerableDispatcher, IERC721EnumerableDispatcherTrait,
 };
+use contracts::components::Counter::{ICounterDispatcher, ICounterDispatcherTrait};
 
 use openzeppelin_token::erc721::interface::{
     IERC721Dispatcher, IERC721DispatcherTrait, IERC721MetadataDispatcher,
@@ -10,6 +17,7 @@ use openzeppelin_token::erc721::interface::{
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
 use starknet::{ContractAddress, contract_address_const};
+use core::integer::{u256};
 
 // Should deploy the contract
 fn deploy_contract(name: ByteArray) -> ContractAddress {
@@ -36,21 +44,110 @@ fn deploy_receiver() -> ContractAddress {
     contract_address
 }
 
+fn create_maintenance_task(
+    maintenance_tracker_dispatcher: IMaintenanceTrackerDispatcher, 
+    counter: ICounterDispatcher,
+    tester_address: ContractAddress
+) -> u256 {
+    
+    let first_task_id = maintenance_tracker_dispatcher.create_maintenance_task(
+        client_name: "Ricardo Montes Chavez",
+        system_name: "Concorde",
+        maintenance_name: "Test Maintenance",
+        system_cycles: 210,
+        estimated_time: 5,
+        start_time: 21250220,
+        cost: 1000000000,
+        repairman: tester_address,
+        quality_inspector: tester_address
+    );
+
+    first_task_id
+}
+
+#[test]
+// Test: Should be able to create a Maintenance Task
+fn test_create_maintenance_task() {
+    let maintenance_tracker_contract_address = deploy_contract("MaintenanceTracker");
+    let maintenance_tracker_dispatcher = IMaintenanceTrackerDispatcher {
+        contract_address: maintenance_tracker_contract_address,
+    };
+    let counter = ICounterDispatcher { contract_address: maintenance_tracker_contract_address };
+
+    let tester_address = deploy_receiver();
+    println!("Tester address: {:?}", tester_address);
+
+    let starting_tasks_balance = counter.current(); // should be 0
+    println!("Starting taks balance: {:?}", starting_tasks_balance);
+    
+    
+    println!("Creating maintenance task...");
+    let created_task_id = create_maintenance_task(
+        maintenance_tracker_dispatcher,
+        counter,
+        tester_address
+    );
+
+    let expected_task_id = 1;
+    assert(created_task_id == expected_task_id, 'Token ID must be 1');
+    println!("Task created! Task ID: {:?}", created_task_id);
+    let new_tasks_balance = counter.current();
+    assert_eq!(new_tasks_balance, starting_tasks_balance + 1, "Starting Balance must be increased by 1");
+    println!("New balance of tasks: {:?}", new_tasks_balance);
+}
+
+#[test]
+// Test: Should be able to complete a Maintenance Task
+fn test_execute_task() {
+    let maintenance_tracker_contract_address = deploy_contract("MaintenanceTracker");
+    let maintenance_tracker_dispatcher = IMaintenanceTrackerDispatcher {
+        contract_address: maintenance_tracker_contract_address,
+    };
+    let counter = ICounterDispatcher { contract_address: maintenance_tracker_contract_address };
+
+    let tester_address = deploy_receiver();
+    println!("Tester address: {:?}", tester_address);
+
+    let starting_tasks_balance = counter.current(); // should be 0
+    println!("Starting taks balance: {:?}", starting_tasks_balance);
+    
+    
+    println!("Creating maintenance task...");
+    let created_task_id = create_maintenance_task(
+        maintenance_tracker_dispatcher,
+        counter,
+        tester_address
+    );
+
+    let expected_task_id = 1;
+    assert(created_task_id == expected_task_id, 'Token ID must be 1');
+    println!("Task created! Task ID: {:?}", created_task_id);
+    let new_tasks_balance = counter.current();
+    assert_eq!(new_tasks_balance, starting_tasks_balance + 1, "Starting Balance must be increased by 1");
+    println!("New balance of tasks: {:?}", new_tasks_balance);
+
+
+    maintenance_tracker_dispatcher.complete_maintenance(created_task_id);
+    let mt = maintenance_tracker_dispatcher.get_maintenance_task(created_task_id);
+    assert!(mt.execution_status == ExecutionStatus::CompletedByRepairman, "execution_status must be CompletedByRepairman");
+    println!("New execution status of tasks {:?}: CompletedByRepairman", created_task_id);
+}
+
 #[test]
 // Test: Should be able to mint two NFT and transfer the frist item to another account
 fn test_mint_item() {
-    let your_collectible_contract_address = deploy_contract("MaintenanceTracker");
-    let your_collectible_dispatcher = IMaintenanceTrackerDispatcher {
-        contract_address: your_collectible_contract_address,
+    let maintenance_tracker_contract_address = deploy_contract("MaintenanceTracker");
+    let maintenance_tracker_dispatcher = IMaintenanceTrackerDispatcher {
+        contract_address: maintenance_tracker_contract_address,
     };
-    let erc721 = IERC721Dispatcher { contract_address: your_collectible_contract_address };
+    let erc721 = IERC721Dispatcher { contract_address: maintenance_tracker_contract_address };
     let tester_address = deploy_receiver();
     println!("Tester address: {:?}", tester_address);
     let starting_balance = erc721.balance_of(tester_address);
     println!("Starting balance: {:?}", starting_balance);
     println!("Minting...");
     let url: ByteArray = "QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr";
-    let first_token_id = your_collectible_dispatcher.mint_item(tester_address, url.clone());
+    let first_token_id = maintenance_tracker_dispatcher.mint_item(tester_address, url.clone());
     let expected_token_id = 1;
     assert(first_token_id == expected_token_id, 'Token ID must be 1');
     println!("Item minted! Token ID: {:?}", first_token_id);
@@ -60,7 +157,7 @@ fn test_mint_item() {
 
     // Should track tokens of owner by index
     let erc721Enumerable = IERC721EnumerableDispatcher {
-        contract_address: your_collectible_contract_address,
+        contract_address: maintenance_tracker_contract_address,
     };
     let index = new_balance - 1;
     let first_token_id = erc721Enumerable.token_of_owner_by_index(tester_address, index);
@@ -69,7 +166,7 @@ fn test_mint_item() {
 
     // mint another item
     let url2: ByteArray = "QmVHi3c4qkZcH3cJynzDXRm5n7dzc9R9TUtUcfnWQvhdcw";
-    let second_token_id = your_collectible_dispatcher.mint_item(tester_address, url2);
+    let second_token_id = maintenance_tracker_dispatcher.mint_item(tester_address, url2);
     let expected_token_id = 2;
     assert(second_token_id == expected_token_id, 'Token ID must be 2');
     println!("Item minted! Token ID: {:?}", second_token_id);
@@ -86,7 +183,7 @@ fn test_mint_item() {
     println!("Transfering first item...");
     // Change the caller address of the MaintenanceTracker to the tester_address
     cheat_caller_address(
-        your_collectible_contract_address, tester_address, CheatSpan::TargetCalls(1),
+        maintenance_tracker_contract_address, tester_address, CheatSpan::TargetCalls(1),
     );
     erc721.transfer_from(tester_address, new_owner, first_token_id); // first_token_id = 1
     let balance_new_owner = erc721.balance_of(new_owner);
@@ -98,7 +195,7 @@ fn test_mint_item() {
     println!("New balance tester: {:?}", balance_tester);
 
     let erc721Metadata = IERC721MetadataDispatcher {
-        contract_address: your_collectible_contract_address,
+        contract_address: maintenance_tracker_contract_address,
     };
     let token_uri = erc721Metadata.token_uri(first_token_id); // first_token_id = 1
     println!("Token URI: {:?}", token_uri);
@@ -123,18 +220,18 @@ fn test_mint_item() {
 #[test]
 // Test: Should be able to mint a NFT and transfer it to another account
 fn test_mint_item2() {
-    let your_collectible_contract_address = deploy_contract("MaintenanceTracker");
-    let your_collectible_dispatcher = IMaintenanceTrackerDispatcher {
-        contract_address: your_collectible_contract_address,
+    let maintenance_tracker_contract_address = deploy_contract("MaintenanceTracker");
+    let maintenance_tracker_dispatcher = IMaintenanceTrackerDispatcher {
+        contract_address: maintenance_tracker_contract_address,
     };
-    let erc721 = IERC721Dispatcher { contract_address: your_collectible_contract_address };
+    let erc721 = IERC721Dispatcher { contract_address: maintenance_tracker_contract_address };
     let tester_address = deploy_receiver();
     println!("Tester address: {:?}", tester_address);
     let starting_balance = erc721.balance_of(tester_address);
     println!("Starting balance: {:?}", starting_balance);
     println!("Minting...");
     let url: ByteArray = "QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr";
-    let first_token_id = your_collectible_dispatcher.mint_item(tester_address, url.clone());
+    let first_token_id = maintenance_tracker_dispatcher.mint_item(tester_address, url.clone());
     let expected_token_id = 1;
     assert(first_token_id == expected_token_id, 'Token ID must be 1');
     println!("Item minted! Token ID: {:?}", first_token_id);
@@ -144,7 +241,7 @@ fn test_mint_item2() {
 
     // Should track tokens of owner by index
     let erc721Enumerable = IERC721EnumerableDispatcher {
-        contract_address: your_collectible_contract_address,
+        contract_address: maintenance_tracker_contract_address,
     };
     let index = new_balance - 1;
     let first_token_id = erc721Enumerable.token_of_owner_by_index(tester_address, index);
@@ -160,7 +257,7 @@ fn test_mint_item2() {
     println!("Transfering first item...");
     // Change the caller address of the MaintenanceTracker to the tester_address
     cheat_caller_address(
-        your_collectible_contract_address, tester_address, CheatSpan::TargetCalls(1),
+        maintenance_tracker_contract_address, tester_address, CheatSpan::TargetCalls(1),
     );
     erc721.transfer_from(tester_address, new_owner, first_token_id); // first_token_id = 1
     let balance_new_owner = erc721.balance_of(new_owner);
@@ -172,7 +269,7 @@ fn test_mint_item2() {
     println!("New balance tester: {:?}", balance_tester);
 
     let erc721Metadata = IERC721MetadataDispatcher {
-        contract_address: your_collectible_contract_address,
+        contract_address: maintenance_tracker_contract_address,
     };
     let token_uri = erc721Metadata.token_uri(first_token_id); // first_token_id = 1
     println!("Token URI: {:?}", token_uri);
