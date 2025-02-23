@@ -193,6 +193,7 @@ export const nftMetadata = (taskData: TaskData | undefined) => {
 };
 
 export enum eTaskStatus {
+  IDLE = "Idle",
   PENDING = "Pending",
   COMPLETED_BY_REPAIRMAN = "Completed by Repairman",
   CERTIFIED_BY_QUALITY_INSPECTOR = "Certified by Quality Inspector",
@@ -202,7 +203,7 @@ export enum eTaskStatus {
 }
 
 export const getTaskStatus = (taskData: TaskData) => {
-  let taskStatus: eTaskStatus = eTaskStatus.PENDING;
+  let taskStatus: eTaskStatus = eTaskStatus.IDLE;
 
   if (taskData) {
     if (taskData.general_status.variant.InProgress !== undefined) {

@@ -3,10 +3,11 @@ import { useAccount } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
 import { TaskData, nftMetadata } from "~~/utils/simpleNFT/nftsMetadata";
 import { addToIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
+import { TaskSelect } from "~~/components/admin/TaskSelect";
+import { eTaskStatus } from "~~/utils/simpleNFT/nftsMetadata";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
-import { TaskSelect } from "~~/components/admin/TaskSelect";
 
 export function PayTask() {
   const { address: connectedAddress } = useAccount();
@@ -95,6 +96,10 @@ export function PayTask() {
       <TaskSelect
         actionName="Pay and Mint"
         selectedTask={selectedTask}
+        enabledStates={[
+          eTaskStatus.COMPLETED_UNPAID,
+          eTaskStatus.COMPLETED_PAID,
+        ]}
         setSelectedTask={setSelectedTask}
         handleAction={handlePayAndMint}
       />

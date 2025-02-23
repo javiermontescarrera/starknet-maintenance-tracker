@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAccount } from "@starknet-react/core";
 import {
-  TaskData,
-  nftMetadata,
+  // TaskData,
+  // nftMetadata,
   eTaskStatus,
   getTaskStatus,
 } from "~~/utils/simpleNFT/nftsMetadata";
@@ -11,11 +11,13 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldRead
 export function TaskSelect({
   actionName,
   selectedTask,
+  enabledStates,
   setSelectedTask,
   handleAction,
 }: {
   actionName: string;
   selectedTask: number;
+  enabledStates: eTaskStatus[];
   setSelectedTask: Dispatch<SetStateAction<number>>;
   handleAction: (taskId: number) => void;
 }) {
@@ -72,6 +74,7 @@ export function TaskSelect({
             id="taskDropdown"
             className="form-control mt-0 m-2 p-1 rounded-md w-32"
             value={selectedTask}
+            defaultValue={0}
             onChange={handleTaskChange}
           >
             <option value={0} disabled hidden>
@@ -94,6 +97,7 @@ export function TaskSelect({
       <button
         className="btn btn-primary mt-2 border-2 border-secondary"
         onClick={handleClick}
+        disabled={!enabledStates.includes(taskStatus)}
       >
         {actionName}
       </button>

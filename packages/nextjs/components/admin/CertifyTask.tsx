@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { notification } from "~~/utils/scaffold-stark";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 import { TaskSelect } from "~~/components/admin/TaskSelect";
+import { eTaskStatus } from "~~/utils/simpleNFT/nftsMetadata";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 
 export function CertifyTask() {
   const [selectedTask, setSelectedTask] = useState(0);
@@ -11,10 +12,6 @@ export function CertifyTask() {
     functionName: "certify_maintenance",
     args: [selectedTask],
   });
-
-  const handleTaskChange = (event: { target: { value: string } }) => {
-    setSelectedTask(parseInt(event.target.value, 10));
-  };
 
   const handleCertifyTask = async (taskId: number) => {
     notification.info(`Executing task ${selectedTask}...`);
@@ -40,6 +37,7 @@ export function CertifyTask() {
       <TaskSelect
         actionName="Certify Task"
         selectedTask={selectedTask}
+        enabledStates={[eTaskStatus.COMPLETED_BY_REPAIRMAN]}
         setSelectedTask={setSelectedTask}
         handleAction={handleCertifyTask}
       />
