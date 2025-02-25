@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccount } from "@starknet-react/core";
 import {
   // TaskData,
@@ -25,11 +26,16 @@ export function TaskSelect({
 
   const [taskStatus, setTaskStatus] = useState(eTaskStatus.PENDING);
 
-  const { data: taskData, refetch: refreshTaskData } = useScaffoldReadContract({
+  const {
+    data: taskData,
+    isLoading,
+    isFetching,
+    refetch: refreshTaskData,
+  } = useScaffoldReadContract({
     contractName: "MaintenanceTracker",
     functionName: "get_maintenance_task",
     args: [selectedTask],
-    watch: true,
+    // watch: true,
   });
 
   const { data: numberOfTasks, refetch: refreshNumberOfTasks } =
@@ -77,7 +83,7 @@ export function TaskSelect({
             defaultValue={0}
             onChange={handleTaskChange}
           >
-            <option value={0} disabled hidden>
+            <option value={0} disabled>
               Select a task
             </option>
             {Array.from({ length: Number(numberOfTasks) }, (_, index) => (
@@ -87,10 +93,28 @@ export function TaskSelect({
             ))}
           </select>
           {selectedTask > 0 && (
-            <div>
-              <strong>Task Status: </strong>
-              <span>{taskStatus.toString()}</span>
-            </div>
+            <>
+              {/* <button
+                className="btn btn-ghost btn-xs border-2 border-secondary"
+                onClick={async () => await refreshTaskData()}
+              >
+                <ArrowPathIcon
+                  className="h-3 w-3 cursor-pointer"
+                  aria-hidden="true"
+                  title="Refresh"
+                />
+              </button> */}
+              <div>
+                {/* {!isLoading && isFetching ? (
+                  <span className="loading loading-spinner loading-xs"></span>
+                ) : ( */}
+                <>
+                  <strong>Task Status: </strong>
+                  <span>{taskStatus.toString()}</span>
+                </>
+                {/* )} */}
+              </div>
+            </>
           )}
         </div>
       </div>

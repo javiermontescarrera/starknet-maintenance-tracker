@@ -8,6 +8,7 @@ import { useState } from "react";
 import { OverviewSection } from "~~/components/OverviewSection";
 import { MaintenanceExplorer } from "~~/components/maintenance/MaintenanceExplorer";
 import { MyHoldings } from "~~/components/SimpleNFT/MyHoldings";
+import ConnectModal from "~~/components/scaffold-stark/CustomConnectButton/ConnectModal";
 
 const Home: NextPage = () => {
   const { address: connectedAddress, isConnected, isConnecting } = useAccount();
@@ -29,8 +30,19 @@ const Home: NextPage = () => {
   return (
     <>
       <OverviewSection />
-      <MaintenanceExplorer setStatus={setStatus} />
-      <MyHoldings setStatus={setStatus} />
+      {isConnected ? (
+        <>
+          <MaintenanceExplorer setStatus={setStatus} />
+          <MyHoldings setStatus={setStatus} />
+        </>
+      ) : (
+        <div className="flex flex-row items-center justify-center gap-4">
+          <span className="text-2xl text-red-400 text-center font-bold">
+            Connect your wallet to get started 👉
+          </span>
+          <ConnectModal />
+        </div>
+      )}
     </>
   );
 };
