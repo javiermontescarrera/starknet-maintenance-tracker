@@ -5,7 +5,7 @@ use starknet::{
     get_contract_address
 };
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, PartialEq)]
 #[allow(starknet::store_no_default_variant)]
 pub enum TaskStatus {
     InProgress,
@@ -14,7 +14,7 @@ pub enum TaskStatus {
     CertificateMinted,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, PartialEq)]
 #[allow(starknet::store_no_default_variant)]
 pub enum ExecutionStatus {
     None,
@@ -55,18 +55,7 @@ pub trait IMaintenanceTracker<T> {
     fn complete_maintenance(ref self: T, task_id: u256);
     fn certify_maintenance(ref self: T, task_id: u256);
     fn pay_and_mint(ref self: T, task_id: u256, recipient: ContractAddress, uri: ByteArray);
-    fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
-}
-
-impl PartialEqImpl of PartialEq<ExecutionStatus> {
-    fn eq(lhs: @ExecutionStatus, rhs: @ExecutionStatus) -> bool {
-        match (lhs, rhs) {
-            (ExecutionStatus::None, ExecutionStatus::None) => true,
-            (ExecutionStatus::CompletedByRepairman, ExecutionStatus::CompletedByRepairman) => true,
-            (ExecutionStatus::CertifiedByQualityInspector, ExecutionStatus::CertifiedByQualityInspector) => true,
-            _ => false,
-        }
-    }
+    // fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
 }
 
 #[starknet::contract]
@@ -254,17 +243,17 @@ mod MaintenanceTracker {
 
         }
 
-        // Borrar ============================================================================
-        fn mint_item(ref self: ContractState, recipient: ContractAddress, uri: ByteArray) -> u256 {
+        // // Borrar ============================================================================
+        // fn mint_item(ref self: ContractState, recipient: ContractAddress, uri: ByteArray) -> u256 {
             
-            self.token_id_counter.increment();
-            let token_id = self.token_id_counter.current();
-            self.erc721.mint(recipient, token_id);
-            self.set_token_uri(token_id, uri);
+        //     self.token_id_counter.increment();
+        //     let token_id = self.token_id_counter.current();
+        //     self.erc721.mint(recipient, token_id);
+        //     self.set_token_uri(token_id, uri);
 
-            token_id  
-        }
-        // ===================================================================================
+        //     token_id  
+        // }
+        // // ===================================================================================
     }
 
     #[abi(embed_v0)]
