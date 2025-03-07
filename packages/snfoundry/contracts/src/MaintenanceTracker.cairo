@@ -242,18 +242,6 @@ mod MaintenanceTracker {
             }
 
         }
-
-        // // Borrar ============================================================================
-        // fn mint_item(ref self: ContractState, recipient: ContractAddress, uri: ByteArray) -> u256 {
-            
-        //     self.token_id_counter.increment();
-        //     let token_id = self.token_id_counter.current();
-        //     self.erc721.mint(recipient, token_id);
-        //     self.set_token_uri(token_id, uri);
-
-        //     token_id  
-        // }
-        // // ===================================================================================
     }
 
     #[abi(embed_v0)]
